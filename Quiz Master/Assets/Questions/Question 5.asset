@@ -13,3 +13,9 @@ MonoBehaviour:
   m_Name: Question 5
   m_EditorClassIdentifier: 
   question: Which of the following CANNOT occur multiple numbers of times in a program?
+  answers:
+  - Namespac
+  - Class
+  - Entry point
+  - Function
+  correctAnswerIndex: 2

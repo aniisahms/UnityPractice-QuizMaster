@@ -14,3 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   question: Which of.NET components can be used to remove unused references from
     the managed heap?
+  answers:
+  - Garbage Collector
+  - Common Language Infrastructure
+  - CLR
+  - Class Loader

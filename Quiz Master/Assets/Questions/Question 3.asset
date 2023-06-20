@@ -13,3 +13,9 @@ MonoBehaviour:
   m_Name: Question 3
   m_EditorClassIdentifier: 
   question: Which of the following statements is correct about Managed Code?
+  answers:
+  - Managed code is the code where resources are Garbage Collected.
+  - ' Managed code is the code that can run on top of Linux.'
+  - Managed code is the code that runs on top of Windows.
+  - Managed code is the code that is written to target the services of the CLR.
+  correctAnswerIndex: 3

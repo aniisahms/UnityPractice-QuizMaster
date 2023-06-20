@@ -13,3 +13,9 @@ MonoBehaviour:
   m_Name: Question 1
   m_EditorClassIdentifier: 
   question: Which language is not a true object-oriented programming language?
+  answers:
+  - VB.NET
+  - C++
+  - JAVA
+  - C#
+  correctAnswerIndex: 1
