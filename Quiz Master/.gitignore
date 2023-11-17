@@ -1,0 +1,5 @@
+Quiz Master/Library/*
+Quiz Master/Logs/*
+Quiz Master/Temp/*
+.vsconfig
+*.sln

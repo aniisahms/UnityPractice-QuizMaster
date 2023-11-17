@@ -6,60 +6,118 @@ using UnityEngine.UI;
 
 public class Quiz : MonoBehaviour
 {
-    [SerializeField] QuestionSO question;
+    [Header("Questions")]
     [SerializeField] TextMeshProUGUI questionText;
-    [SerializeField] GameObject[] answerButtons;
+    [SerializeField] List<QuestionSO> questions = new List<QuestionSO>();
+    QuestionSO currentQuestion;
 
+    [Header("Answers")]
     int correctAnswerIndex;
-    [SerializeField] Sprite corectAnswerSprite;
+    [SerializeField] GameObject[] answerButtons;
+    bool hasAnsweredEarly;
+
+    [Header("Button Colors")]
+    [SerializeField] Sprite correctAnswerSprite;
     [SerializeField] Sprite defaultAnswerSprite;
+
+    [Header("Timer")]
+    [SerializeField] Image timerImage;
+    Timer timer;
 
     private void Start()
     {
-        DisplayQuestion();
+        timer = FindObjectOfType<Timer>();
+        // GetNextQuestion();
+    }
+
+    private void Update()
+    {
+        timerImage.fillAmount = timer.timerFillFraction;
+        
+        if(timer.loadNextQuestion)
+        {
+            hasAnsweredEarly = false;
+            GetNextQuestion();
+            timer.loadNextQuestion = false;
+        }
+        else if(!hasAnsweredEarly && !timer.isAnsweringQuestion)
+        {
+            Debug.Log("Hasn't answered early");
+            DisplayAnswer(-1);
+            SetButtonState(false);
+        }
     }
 
     public void OnAnswerSelected(int index)
     {
+        hasAnsweredEarly = true;
+        DisplayAnswer(index);
+        SetButtonState(false);
+        timer.CancelTimer();
+
+        Debug.Log("Selected. Index: " + index);
+    }
+
+    private void DisplayAnswer(int index)
+    {
         Image buttonImage;
 
-        if(index == question.GetCorrectAnswerIndex())
+        if (index == currentQuestion.GetCorrectAnswerIndex())
         {
             questionText.text = "Correct!";
             buttonImage = answerButtons[index].GetComponent<Image>();
-            buttonImage.sprite = corectAnswerSprite;
+            buttonImage.sprite = correctAnswerSprite;
+            Debug.Log("Correct");
         }
         else
         {
-            correctAnswerIndex = question.GetCorrectAnswerIndex();
-            string correctAnswer = question.GetAnswer(correctAnswerIndex);
-            
-            questionText.text = "Unfortunately, you're wrong. The correct answer was:\n" + correctAnswer;
-            
-            buttonImage = answerButtons[correctAnswerIndex].GetComponent<Image>();
-            buttonImage.sprite = corectAnswerSprite;
-        }
+            correctAnswerIndex = currentQuestion.GetCorrectAnswerIndex();
+            string correctAnswer = currentQuestion.GetAnswer(correctAnswerIndex);
 
-        SetButtonState(false);
+            questionText.text = "Unfortunately, you're wrong. The correct answer was:\n" + correctAnswer;
+
+            buttonImage = answerButtons[correctAnswerIndex].GetComponent<Image>();
+            buttonImage.sprite = correctAnswerSprite;
+            Debug.Log("Incorrect");
+        }
+        
+        Debug.Log("Index: " + index);
     }
 
     private void GetNextQuestion()
     {
-        SetButtonState(true);
-        DisplayQuestion();
+        if (questions.Count > 0)
+        {
+            SetButtonState(true);
+            SetDefaultButtonSprite();
+            GetRandomQuestion();
+            DisplayQuestion();
+        }
+    }
+
+    private void GetRandomQuestion()
+    {
+        int index = Random.Range(0, questions.Count);
+        currentQuestion = questions[index];
+        
+        if (questions.Contains(currentQuestion))
+        {
+            questions.Remove(currentQuestion);
+        }
     }
 
     private void DisplayQuestion()
     {
-        questionText.text = question.GetQuestion();
+        questionText.text = currentQuestion.GetQuestion();
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
             TextMeshProUGUI buttonText = answerButtons[i].GetComponentInChildren<TextMeshProUGUI>();
-            buttonText.text = question.GetAnswer(i);
+            buttonText.text = currentQuestion.GetAnswer(i);
         }
 
         SetButtonState(true);
+        Debug.Log("Question displayed");
     }
 
     private void SetButtonState(bool state)
